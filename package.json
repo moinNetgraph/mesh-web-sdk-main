@@ -1,0 +1,53 @@
+{
+  "name": "@meshconnect/mesh-b2b-sdk",
+  "version": "2.0.2",
+  "description": "Mesh Connect JS SDKs",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "workspaces": [
+    "examples/*",
+    "packages/*"
+  ],
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "eslint": "^7.23.0",
+    "eslint-config-prettier": "^8.1.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-prettier": "^3.4.0",
+    "lerna": "^6.1.0",
+    "prettier": "^2.2.1",
+    "rimraf": "^3.0.0",
+    "typescript": "^5.0.4",
+    "yarn": "^1.22.19"
+  },
+  "scripts": {
+    "typecheck": "lerna run typecheck",
+    "lint": "lerna run lint",
+    "build": "lerna run build",
+    "test": "lerna run test",
+    "test:cov": "lerna run test:cov",
+    "lint:fix": "lerna run lint -- --fix",
+    "start:demo": "cd examples/react-example && yarn start",
+    "updateApi": "cd packages/node-api && yarn updateApi",
+    "publish:npm": "lerna run publish:npm",
+    "postinstall": "cd packages/link && yarn updateVersion"
+  },
+  "resolutions": {
+    "axios": "^1.7.4",
+    "rollup": "^4.22.4",
+    "semver": "^7.6.2",
+    "nanoid": "^3.3.8"
+  },
+  "dependencies": {
+    "@types/crypto-js": "^4.2.2",
+    "axios": "^1.8.4",
+    "cors": "^2.8.5",
+    "crypto-js": "^4.2.0",
+    "express": "^4.21.2",
+    "open": "^10.1.0",
+    "react-router-dom": "^7.4.0",
+    "server": "^1.0.41"
+  }
+}
