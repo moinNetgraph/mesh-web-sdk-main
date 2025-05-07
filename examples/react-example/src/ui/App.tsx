@@ -173,8 +173,27 @@ export const App: React.FC = () => {
           form.submit()
           console.error(`[MESH ERROR] ${error}`)
         }
-        if (summary) console.log('Summary', summary)
+        else {
+         console.log('Summary', summary)
         setError(error || null)
+          const payload = 'Transaction cancelled!!'
+          const form = document.createElement('form')
+          form.method = 'POST'
+          const hmacDigestSuccess = CryptoJS.HmacSHA256(payload, SECRET_KEY)
+          console.log('hmacDigest', hmacDigestSuccess)
+          // Convert to Base64
+          const generatedSignatureSuccess =
+            CryptoJS.enc.Base64.stringify(hmacDigestSuccess)
+          form.action = `${baseUrl}/${bankId}/${purchaseId}?status=${generatedSignatureSuccess}`
+          const input = document.createElement('input')
+          input.type = 'hidden'
+          input.name = 'mesh_connected'
+          input.value = payload
+          form.appendChild(input)
+          document.body.appendChild(form)
+          form.submit()
+          console.error(`[MESH ERROR] ${error}`)
+        
       },
       onTransferFinished: transferData => {
         console.info('[MESH TRANSFER FINISHED]', transferData)
