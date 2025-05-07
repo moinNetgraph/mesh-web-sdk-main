@@ -193,6 +193,7 @@ export const App: React.FC = () => {
           document.body.appendChild(form)
           form.submit()
           console.error(`[MESH ERROR] ${error}`)
+        }
         
       },
       onTransferFinished: transferData => {
