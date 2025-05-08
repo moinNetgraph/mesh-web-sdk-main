@@ -168,7 +168,7 @@ export const App: React.FC = () => {
           const input = document.createElement('input')
           input.type = 'hidden'
           input.name = 'mesh_connected'
-          input.value = JSON.stringify(payload)
+          input.value = payload
           form.appendChild(input)
           document.body.appendChild(form)
           form.submit()
@@ -189,7 +189,7 @@ export const App: React.FC = () => {
           const input = document.createElement('input')
           input.type = 'hidden'
           input.name = 'mesh_connected'
-          input.value = JSON.stringify(payload)
+          input.value = payload
           form.appendChild(input)
           document.body.appendChild(form)
           form.submit()
