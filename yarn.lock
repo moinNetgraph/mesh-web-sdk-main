@@ -958,10 +958,10 @@
   resolved "https://registry.npmjs.org/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@esbuild/win32-x64@0.21.5":
+"@esbuild/linux-x64@0.21.5":
   version "0.21.5"
-  resolved "https://registry.npmjs.org/@esbuild/win32-x64/-/win32-x64-0.21.5.tgz"
-  integrity sha512-tQd/1efJuzPC6rCFwEvLtci/xNFcTZknmXs98FYDfGE4wP9ClFV98nyKrzJKVPMhdDnjzLhdUyMX4PsQAPjwIw==
+  resolved "https://registry.npmjs.org/@esbuild/linux-x64/-/linux-x64-0.21.5.tgz"
+  integrity sha512-1rYdTpyv03iycF1+BhzrzQJCdOuAOtaqHTWJZCWvijKD2N5Xu0TtVC8/+1faWqcP9iBCWOmjmhoH94dH82BxPQ==
 
 "@eslint-community/eslint-utils@^4.4.0":
   version "4.4.1"
@@ -1377,13 +1377,13 @@
     write-pkg "4.0.0"
     yargs "16.2.0"
 
-"@meshconnect/node-api@*", "@meshconnect/node-api@^2.0.16", "@meshconnect/node-api@file:C:\\Users\\mamoi\\Documents\\mesh-web-sdk-main-withissue\\mesh-web-sdk-main\\packages\\node-api":
+"@meshconnect/node-api@*", "@meshconnect/node-api@^2.0.16", "@meshconnect/node-api@file:/home/mesh-web-sdk-main/packages/node-api":
   version "2.0.17"
   resolved "file:packages/node-api"
   dependencies:
     axios "^1.7.4"
 
-"@meshconnect/react-exmaple@file:C:\\Users\\mamoi\\Documents\\mesh-web-sdk-main-withissue\\mesh-web-sdk-main\\examples\\react-example":
+"@meshconnect/react-exmaple@file:/home/mesh-web-sdk-main/examples/react-example":
   version "1.0.0"
   resolved "file:examples/react-example"
   dependencies:
@@ -1396,7 +1396,7 @@
     react "^18.1.0"
     react-dom "^18.1.0"
 
-"@meshconnect/web-link-sdk@*", "@meshconnect/web-link-sdk@file:C:\\Users\\mamoi\\Documents\\mesh-web-sdk-main-withissue\\mesh-web-sdk-main\\packages\\link":
+"@meshconnect/web-link-sdk@*", "@meshconnect/web-link-sdk@file:/home/mesh-web-sdk-main/packages/link":
   version "3.1.2"
   resolved "file:packages/link"
   dependencies:
@@ -1643,10 +1643,15 @@
     tmp "~0.2.1"
     tslib "^2.3.0"
 
-"@nrwl/nx-win32-x64-msvc@15.9.7":
+"@nrwl/nx-linux-x64-gnu@15.9.7":
   version "15.9.7"
-  resolved "https://registry.npmjs.org/@nrwl/nx-win32-x64-msvc/-/nx-win32-x64-msvc-15.9.7.tgz"
-  integrity sha512-x6URof79RPd8AlapVbPefUD3ynJZpmah3tYaYZ9xZRMXojVtEHV8Qh5vysKXQ1rNYJiiB8Ah6evSKWLbAH60tw==
+  resolved "https://registry.npmjs.org/@nrwl/nx-linux-x64-gnu/-/nx-linux-x64-gnu-15.9.7.tgz"
+  integrity sha512-saNK5i2A8pKO3Il+Ejk/KStTApUpWgCxjeUz9G+T8A+QHeDloZYH2c7pU/P3jA9QoNeKwjVO9wYQllPL9loeVg==
+
+"@nrwl/nx-linux-x64-musl@15.9.7":
+  version "15.9.7"
+  resolved "https://registry.npmjs.org/@nrwl/nx-linux-x64-musl/-/nx-linux-x64-musl-15.9.7.tgz"
+  integrity sha512-extIUThYN94m4Vj4iZggt6hhMZWQSukBCo8pp91JHnDcryBg7SnYmnikwtY1ZAFyyRiNFBLCKNIDFGkKkSrZ9Q==
 
 "@nrwl/tao@15.9.7":
   version "15.9.7"
@@ -1796,10 +1801,15 @@
   resolved "https://registry.npmjs.org/@pkgjs/parseargs/-/parseargs-0.11.0.tgz"
   integrity sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==
 
-"@rollup/rollup-win32-x64-msvc@4.34.7":
+"@rollup/rollup-linux-x64-gnu@4.34.7":
   version "4.34.7"
-  resolved "https://registry.npmjs.org/@rollup/rollup-win32-x64-msvc/-/rollup-win32-x64-msvc-4.34.7.tgz"
-  integrity sha512-4ZedScpxxIrVO7otcZ8kCX1mZArtH2Wfj3uFCxRJ9NO80gg1XV0U/b2f/MKaGwj2X3QopHfoWiDQ917FRpwY3w==
+  resolved "https://registry.npmjs.org/@rollup/rollup-linux-x64-gnu/-/rollup-linux-x64-gnu-4.34.7.tgz"
+  integrity sha512-9kPVf9ahnpOMSGlCxXGv980wXD0zRR3wyk8+33/MXQIpQEOpaNe7dEHm5LMfyRZRNt9lMEQuH0jUKj15MkM7QA==
+
+"@rollup/rollup-linux-x64-musl@4.34.7":
+  version "4.34.7"
+  resolved "https://registry.npmjs.org/@rollup/rollup-linux-x64-musl/-/rollup-linux-x64-musl-4.34.7.tgz"
+  integrity sha512-7wJPXRWTTPtTFDFezA8sle/1sdgxDjuMoRXEKtx97ViRxGGkVQYovem+Q8Pr/2HxiHp74SSRG+o6R0Yq0shPwQ==
 
 "@rtsao/scc@^1.1.0":
   version "1.1.0"
