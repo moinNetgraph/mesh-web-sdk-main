@@ -119,7 +119,7 @@ export const App: React.FC = () => {
     setTransferFinishedData(null)
     setError(null)
 
-    const baseUrl = 'https://staging.paysecure.net/custRedirect'
+    const baseUrl = 'https://test4.paymentsclub.net/custRedirect'
 
     const meshLink = createLink({
       clientId: directLinkToken,
