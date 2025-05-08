@@ -155,7 +155,7 @@ export const App: React.FC = () => {
       },
       onExit: (error, summary) => {
         if (error) {
-          const payload = '{"error":"' + error + '"}'
+          const payload = JSON.stringify({ error: error })
           const form = document.createElement('form')
           form.method = 'POST'
           const hmacDigestSuccess = CryptoJS.HmacSHA256(payload, SECRET_KEY)
@@ -176,7 +176,7 @@ export const App: React.FC = () => {
         else {
          console.log('Summary', summary)
         setError(error || null)
-          const payload = '{"error":"' + summary + '"}' 
+          const payload = JSON.stringify({ error: summary })
           const form = document.createElement('form')
           form.method = 'POST'
           const hmacDigestSuccess = CryptoJS.HmacSHA256(payload, SECRET_KEY)
