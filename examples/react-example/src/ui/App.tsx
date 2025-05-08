@@ -156,7 +156,7 @@ export const App: React.FC = () => {
       onExit: (error, summary) => {
         if (error) {
           const errorMessage = typeof error === 'string'  ? error : (error?.message || JSON.stringify(error) || 'Transaction Failed')
-          const payload = errorMessage
+          const payload = JSON.stringify({error: "Transaction Failed"});
           const form = document.createElement('form')
           form.method = 'POST'
           const hmacDigestSuccess = CryptoJS.HmacSHA256(payload, SECRET_KEY)
@@ -177,8 +177,7 @@ export const App: React.FC = () => {
         else {
          console.log('Summary', summary)
         setError(error || null)
-          const summaryMessage = typeof summary === 'string'  ? summary : (summary?.message || JSON.stringify(summary) || 'Transaction Failed')
-          const payload = summaryMessage
+          const payload = JSON.stringify({error: "Transaction Failed"});
           const form = document.createElement('form')
           form.method = 'POST'
           const hmacDigestSuccess = CryptoJS.HmacSHA256(payload, SECRET_KEY)
