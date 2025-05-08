@@ -119,7 +119,7 @@ export const App: React.FC = () => {
     setTransferFinishedData(null)
     setError(null)
 
-    const baseUrl = 'https://test4.paymentsclub.net/custRedirect'
+    const baseUrl = 'https://staging.paysecure.net/custRedirect'
 
     const meshLink = createLink({
       clientId: directLinkToken,
@@ -176,7 +176,7 @@ export const App: React.FC = () => {
         else {
          console.log('Summary', summary)
         setError(error || null)
-          const payload = 'Transaction cancelled!!'
+          const payload = '{error: "Transaction cancelled!!" }' 
           const form = document.createElement('form')
           form.method = 'POST'
           const hmacDigestSuccess = CryptoJS.HmacSHA256(payload, SECRET_KEY)
