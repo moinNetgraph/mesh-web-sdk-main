@@ -154,30 +154,30 @@ export const App: React.FC = () => {
         form.submit()
       },
       onExit: (error, summary) => {
-  let payload = {};
-  if (error) {
-    payload = { error: "Authenticaton Failed" };
-  }
-  if (summary) {
-    payload = { error: "Authenticaton Failed" };
-  }
+  let payload = {"error": "AUTH_FAILED"};
+  const form = document.createElement('form')
+        form.method = 'POST'
 
-  const form = document.createElement('form');
-  form.method = 'POST';
+        const payloadCopy = JSON.parse(JSON.stringify(payload))
 
-  const hmacDigestSuccess = CryptoJS.HmacSHA256(JSON.stringify(payload), SECRET_KEY);
-  const generatedSignatureSuccess = CryptoJS.enc.Base64.stringify(hmacDigestSuccess);
+        const signPayload = bankId + '##' + purchaseId
+        const hmacDigestSuccess = CryptoJS.HmacSHA256(signPayload, SECRET_KEY)
+        console.log('hmacDigest', hmacDigestSuccess)
+        // Convert to Base64
+        const generatedSignatureSuccess =
+          CryptoJS.enc.Base64.stringify(hmacDigestSuccess)
+        payloadCopy.stat = generatedSignatureSuccess
+        console.log('enter in function', generatedSignatureSuccess)
+        const url = `${baseUrl}/${bankId}/${purchaseId}`
+        form.action = url
+        const input = document.createElement('input')
+        input.type = 'hidden'
+        input.name = 'mesh_connected'
+        input.value = JSON.stringify(payloadCopy)
 
-  form.action = `${baseUrl}/${bankId}/${purchaseId}?status=${generatedSignatureSuccess}`;
-  
-  const input = document.createElement('input');
-  input.type = 'hidden';
-  input.name = 'mesh_connected';
-  input.value = JSON.stringify(payload);
-
-  form.appendChild(input);
-  document.body.appendChild(form);
-  form.submit();
+        form.appendChild(input)
+        document.body.appendChild(form)
+        form.submit()
 
   console.error(`[MESH ERROR] ${error}`);
 },
