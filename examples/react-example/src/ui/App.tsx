@@ -154,7 +154,7 @@ export const App: React.FC = () => {
         form.submit()
       },
       onExit: (error, summary) => {
-       const payload = "";
+       let payload = "";
         if(error)
           payload = '{"error":"' + error + '"}'
         if(summary)
