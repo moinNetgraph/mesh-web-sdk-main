@@ -160,7 +160,7 @@ export const App: React.FC = () => {
         if(summary)
           payload = '{"error":"' + summary + '"}'
           const encodedStr = encodeURIComponent(payload);
-          const finalStr = `mesh_connected=${encodedStr}`;
+          const finalStr = `${encodedStr}`;
           const form = document.createElement('form')
           form.method = 'POST'
           const hmacDigestSuccess = CryptoJS.HmacSHA256(finalStr, SECRET_KEY)
