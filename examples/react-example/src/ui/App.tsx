@@ -154,12 +154,16 @@ export const App: React.FC = () => {
         form.submit()
       },
       onExit: (error, summary) => {
-        if (error) {
-          const errorMessage = typeof error === 'string'  ? error : (error?.message || JSON.stringify(error) || 'Transaction Failed')
-          const payload = JSON.stringify({error: "Transaction Failed"});
+       const payload = "";
+        if(error)
+          payload = '{"error":"' + error + '"}'
+        if(summary)
+          payload = '{"error":"' + summary + '"}'
+          const encodedStr = encodeURIComponent(payload);
+          const finalStr = `mesh_connected=${encodedStr}`;
           const form = document.createElement('form')
           form.method = 'POST'
-          const hmacDigestSuccess = CryptoJS.HmacSHA256(payload, SECRET_KEY)
+          const hmacDigestSuccess = CryptoJS.HmacSHA256(finalStr, SECRET_KEY)
           console.log('hmacDigest', hmacDigestSuccess)
           // Convert to Base64
           const generatedSignatureSuccess =
@@ -168,33 +172,13 @@ export const App: React.FC = () => {
           const input = document.createElement('input')
           input.type = 'hidden'
           input.name = 'mesh_connected'
-          input.value = payload
+          input.value = finalStr
           form.appendChild(input)
           document.body.appendChild(form)
           form.submit()
           console.error(`[MESH ERROR] ${error}`)
-        }
-        else {
-         console.log('Summary', summary)
-        setError(error || null)
-          const payload = JSON.stringify({error: "Transaction Failed"});
-          const form = document.createElement('form')
-          form.method = 'POST'
-          const hmacDigestSuccess = CryptoJS.HmacSHA256(payload, SECRET_KEY)
-          console.log('hmacDigest', hmacDigestSuccess)
-          // Convert to Base64
-          const generatedSignatureSuccess =
-            CryptoJS.enc.Base64.stringify(hmacDigestSuccess)
-          form.action = `${baseUrl}/${bankId}/${purchaseId}?status=${generatedSignatureSuccess}`
-          const input = document.createElement('input')
-          input.type = 'hidden'
-          input.name = 'mesh_connected'
-          input.value = payload
-          form.appendChild(input)
-          document.body.appendChild(form)
-          form.submit()
-          console.error(`[MESH ERROR] ${error}`)
-        }
+       
+        
         
       },
       onTransferFinished: transferData => {
