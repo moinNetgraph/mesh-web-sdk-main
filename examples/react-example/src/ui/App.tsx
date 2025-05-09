@@ -156,10 +156,10 @@ export const App: React.FC = () => {
       onExit: (error, summary) => {
   let payload = {};
   if (error) {
-    payload = { error: error };
+    payload = { error: "Authenticaton Failed" };
   }
   if (summary) {
-    payload = { error: summary };
+    payload = { error: "Authenticaton Failed" };
   }
 
   const form = document.createElement('form');
