@@ -180,7 +180,7 @@ export const App: React.FC = () => {
   form.submit();
 
   console.error(`[MESH ERROR] ${error}`);
-}
+},
       onTransferFinished: transferData => {
         console.info('[MESH TRANSFER FINISHED]', transferData)
         setTransferFinishedData(transferData)
