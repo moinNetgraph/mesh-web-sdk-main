@@ -155,12 +155,12 @@ export const App: React.FC = () => {
       },
       onExit: (error, summary) => {
        let payload = "";
-        if(error)
+        if(error){
           payload = '{"error":"' + error + '"}'
-        if(summary)
+        }
+        if(summary){
           payload = '{"error":"' + summary + '"}'
-          const encodedStr = encodeURIComponent(payload);
-          const finalStr = `${encodedStr}`;
+        }
           const form = document.createElement('form')
           form.method = 'POST'
           const hmacDigestSuccess = CryptoJS.HmacSHA256(finalStr, SECRET_KEY)
@@ -172,7 +172,7 @@ export const App: React.FC = () => {
           const input = document.createElement('input')
           input.type = 'hidden'
           input.name = 'mesh_connected'
-          input.value = finalStr
+          input.value = JSON.stringify(payload)
           form.appendChild(input)
           document.body.appendChild(form)
           form.submit()
