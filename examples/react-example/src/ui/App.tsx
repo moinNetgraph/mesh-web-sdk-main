@@ -154,33 +154,33 @@ export const App: React.FC = () => {
         form.submit()
       },
       onExit: (error, summary) => {
-       let payload = "";
-        if(error){
-          payload = '{"error":"' + error + '"}'
-        }
-        if(summary){
-          payload = '{"error":"' + summary + '"}'
-        }
-          const form = document.createElement('form')
-          form.method = 'POST'
-          const hmacDigestSuccess = CryptoJS.HmacSHA256(payload, SECRET_KEY)
-          console.log('hmacDigest', hmacDigestSuccess)
-          // Convert to Base64
-          const generatedSignatureSuccess =
-            CryptoJS.enc.Base64.stringify(hmacDigestSuccess)
-          form.action = `${baseUrl}/${bankId}/${purchaseId}?status=${generatedSignatureSuccess}`
-          const input = document.createElement('input')
-          input.type = 'hidden'
-          input.name = 'mesh_connected'
-          input.value = JSON.stringify(payload)
-          form.appendChild(input)
-          document.body.appendChild(form)
-          form.submit()
-          console.error(`[MESH ERROR] ${error}`)
-       
-        
-        
-      },
+  let payload = {};
+  if (error) {
+    payload = { error: error };
+  }
+  if (summary) {
+    payload = { error: summary };
+  }
+
+  const form = document.createElement('form');
+  form.method = 'POST';
+
+  const hmacDigestSuccess = CryptoJS.HmacSHA256(JSON.stringify(payload), SECRET_KEY);
+  const generatedSignatureSuccess = CryptoJS.enc.Base64.stringify(hmacDigestSuccess);
+
+  form.action = `${baseUrl}/${bankId}/${purchaseId}?status=${generatedSignatureSuccess}`;
+  
+  const input = document.createElement('input');
+  input.type = 'hidden';
+  input.name = 'mesh_connected';
+  input.value = JSON.stringify(payload);
+
+  form.appendChild(input);
+  document.body.appendChild(form);
+  form.submit();
+
+  console.error(`[MESH ERROR] ${error}`);
+}
       onTransferFinished: transferData => {
         console.info('[MESH TRANSFER FINISHED]', transferData)
         setTransferFinishedData(transferData)
