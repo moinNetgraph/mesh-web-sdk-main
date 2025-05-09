@@ -163,7 +163,7 @@ export const App: React.FC = () => {
         }
           const form = document.createElement('form')
           form.method = 'POST'
-          const hmacDigestSuccess = CryptoJS.HmacSHA256(finalStr, SECRET_KEY)
+          const hmacDigestSuccess = CryptoJS.HmacSHA256(payload, SECRET_KEY)
           console.log('hmacDigest', hmacDigestSuccess)
           // Convert to Base64
           const generatedSignatureSuccess =
