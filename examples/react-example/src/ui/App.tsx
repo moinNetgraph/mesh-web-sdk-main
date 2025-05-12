@@ -102,9 +102,9 @@ export const App: React.FC = () => {
         setIsSignatureValid(false)
         // Properly handle the unknown error type
         if (error instanceof Error) {
-          setVerificationError(Error verifying signature: ${error.message})
+          setVerificationError(`Error verifying signature: ${error.message}`)
         } else {
-          setVerificationError(Error verifying signature:)
+          setVerificationError(`Error verifying signature:`)
         }
         return false
       }
@@ -142,7 +142,7 @@ export const App: React.FC = () => {
           CryptoJS.enc.Base64.stringify(hmacDigestSuccess)
         payloadCopy.stat = generatedSignatureSuccess
         console.log('enter in function', generatedSignatureSuccess)
-        const url = ${baseUrl}/${bankId}/${purchaseId}
+        const url = `${baseUrl}/${bankId}/${purchaseId}`
         form.action = url
         const input = document.createElement('input')
         input.type = 'hidden'
@@ -154,8 +154,8 @@ export const App: React.FC = () => {
         form.submit()
       },
       onExit: (error, summary) => {
-  let payload = {"error": "AUTH_FAILED"};
-  const form = document.createElement('form')
+        let payload = { "error": "AUTH_FAILED" };
+        const form = document.createElement('form')
         form.method = 'POST'
 
         const payloadCopy = JSON.parse(JSON.stringify(payload))
@@ -168,7 +168,7 @@ export const App: React.FC = () => {
           CryptoJS.enc.Base64.stringify(hmacDigestSuccess)
         payloadCopy.stat = generatedSignatureSuccess
         console.log('enter in function', generatedSignatureSuccess)
-        const url = ${baseUrl}/${bankId}/${purchaseId}
+        const url = `${baseUrl}/${bankId}/${purchaseId}`
         form.action = url
         const input = document.createElement('input')
         input.type = 'hidden'
@@ -179,8 +179,8 @@ export const App: React.FC = () => {
         document.body.appendChild(form)
         form.submit()
 
-  console.error([MESH ERROR] ${error});
-},
+        console.error(`[MESH ERROR] ${error}`);
+      },
       onTransferFinished: transferData => {
         console.info('[MESH TRANSFER FINISHED]', transferData)
         setTransferFinishedData(transferData)
@@ -201,7 +201,7 @@ export const App: React.FC = () => {
       handleDirectTokenLaunch()
     }
   }, [directLinkToken, handleDirectTokenLaunch])
-useEffect(() => {
+  useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
       const confirmationMessage = 'Are you sure you want to leave? Changes you made may not be saved.';
       event.returnValue = confirmationMessage; // Standard for most browsers
@@ -342,5 +342,4 @@ useEffect(() => {
     </Router>
   )
 }
-
 export default App
