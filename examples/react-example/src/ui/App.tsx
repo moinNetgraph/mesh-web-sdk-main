@@ -1,7 +1,11 @@
-import React, { useState, useEffect, useCallback } from 'react'
-import { createLink, LinkPayload, TransferFinishedPayload } from '@meshconnect/web-link-sdk'
+import React, { useState, useCallback, useEffect } from 'react'
+import {
+  createLink,
+  LinkPayload,
+  TransferFinishedPayload
+} from '@meshconnect/web-link-sdk'
 import { Section, Button, Input, theme } from '../components/StyledComponents'
-import * as CryptoJS from 'crypto-js'
+import axios from 'axios'
 import {
   BrowserRouter as Router,
   Routes,
@@ -9,13 +13,16 @@ import {
   Navigate,
   useNavigate
 } from 'react-router-dom'
+import * as CryptoJS from 'crypto-js'
+// or for specific components
+//import { SHA256, HmacSHA256 } from 'crypto-js'
 
 const RedirectBlock: React.FC = () => {
   const navigate = useNavigate()
 
   useEffect(() => {
     if (window.location.pathname === '/') {
-      navigate('/blocked', { replace: true }) // Redirect from `/` to `/blocked`
+      navigate('/blocked', { replace: true }) // Redirect from / to /blocked
     }
   }, [])
 
@@ -25,8 +32,8 @@ const RedirectBlock: React.FC = () => {
 export const App: React.FC = () => {
   const [error, setError] = useState<string | null>(null)
   const [payload, setPayload] = useState<LinkPayload | null>(null)
-  const [transferFinishedData, setTransferFinishedData] = useState<TransferFinishedPayload | null>(null)
-  const [isConfirmationRequired, setIsConfirmationRequired] = useState(false) // Track if we need confirmation
+  const [transferFinishedData, setTransferFinishedData] =
+    useState<TransferFinishedPayload | null>(null)
 
   const searchParams = new URLSearchParams(window.location.search)
   const token = searchParams.get('token')
@@ -40,42 +47,153 @@ export const App: React.FC = () => {
   const SECRET_KEY = 'OVzBmEmVk0iaAnoeqTsDvDrnoMNKCU9b1id2cB4KVX0='
   const [isSignatureValid, setIsSignatureValid] = useState(false)
   const [verificationError, setVerificationError] = useState('')
-
   const handleDirectTokenLaunch = useCallback(() => {
     if (!directLinkToken) {
       setError('Please enter a link token')
       return
     }
+    const decodeBase64 = (encoded: string): string => {
+      encoded = encoded.replace(/-/g, '+').replace(/_/g, '/')
 
-    // Signature verification logic
-    const signatureVerify = (clientSecret: string, rawBody: string, receivedSignature: any): boolean => {
+      // Add padding if necessary
+      while (encoded.length % 4 !== 0) {
+        encoded += '='
+      }
+
+      const decoded = atob(encoded) // Decode Base64
+      return decoded
+    }
+    const signatureVerify = (
+      clientSecret: string,
+      rawBody: string,
+      receivedSignature: any
+    ): boolean => {
       try {
+        // eslint-disable-next-line no-debugger
+        //  debugger
+        //console.log(' in function', receivedSignature)
+        // Generate HMAC-SHA256 signature
+        // eslint-disable-next-line no-debugger
+        //debugger
+        // clientSecret = clientSecret.replaceAll('+', '').replaceAll('/', '')
         const hmacDigest = CryptoJS.HmacSHA256(rawBody, clientSecret)
-        const generatedSignature = CryptoJS.enc.Base64.stringify(hmacDigest).replaceAll('+', '').replaceAll('/', '')
+        console.log('hmacDigest', hmacDigest)
+        // Convert to Base64
+
+        const generatedSignature = CryptoJS.enc.Base64.stringify(hmacDigest)
+          .replaceAll('+', '')
+          .replaceAll('/', '')
+
+        console.log('enter in function', generatedSignature)
+        // Compare signatures
         if (generatedSignature === receivedSignature) {
           setIsSignatureValid(true)
           setVerificationError('')
           return true
         } else {
           setIsSignatureValid(false)
-          setVerificationError('Generated signature and received signature did not match.')
+          console.log('not matched')
+          setVerificationError(
+            'Generated signature and received signature did not match.'
+          )
           return false
         }
       } catch (error: unknown) {
         setIsSignatureValid(false)
-        setVerificationError(`Error verifying signature: ${error instanceof Error ? error.message : 'Unknown error'}`)
+        // Properly handle the unknown error type
+        if (error instanceof Error) {
+          setVerificationError(Error verifying signature: ${error.message})
+        } else {
+          setVerificationError(Error verifying signature:)
+        }
         return false
       }
     }
-
     const body = token + '##' + bankId + '##' + purchaseId
     if (!signatureVerify(SECRET_KEY, body, sign)) {
-      setError('Invalid signature')
+      setError('Please enter a link token')
       return
     }
 
-    // Handle the rest of the logic...
+    setPayload(null)
+    setTransferFinishedData(null)
+    setError(null)
 
+    const baseUrl = 'https://test4.paymentsclub.net/custRedirect'
+
+    const meshLink = createLink({
+      clientId: directLinkToken,
+      onIntegrationConnected: async payload => {
+        // eslint-disable-next-line no-debugger
+        // debugger
+        setPayload(payload)
+        console.info('[MESH CONNECTED]', payload)
+
+        const form = document.createElement('form')
+        form.method = 'POST'
+
+        const payloadCopy = JSON.parse(JSON.stringify(payload))
+
+        const signPayload = bankId + '##' + purchaseId
+        const hmacDigestSuccess = CryptoJS.HmacSHA256(signPayload, SECRET_KEY)
+        console.log('hmacDigest', hmacDigestSuccess)
+        // Convert to Base64
+        const generatedSignatureSuccess =
+          CryptoJS.enc.Base64.stringify(hmacDigestSuccess)
+        payloadCopy.stat = generatedSignatureSuccess
+        console.log('enter in function', generatedSignatureSuccess)
+        const url = ${baseUrl}/${bankId}/${purchaseId}
+        form.action = url
+        const input = document.createElement('input')
+        input.type = 'hidden'
+        input.name = 'mesh_connected'
+        input.value = JSON.stringify(payloadCopy)
+
+        form.appendChild(input)
+        document.body.appendChild(form)
+        form.submit()
+      },
+      onExit: (error, summary) => {
+  let payload = {"error": "AUTH_FAILED"};
+  const form = document.createElement('form')
+        form.method = 'POST'
+
+        const payloadCopy = JSON.parse(JSON.stringify(payload))
+
+        const signPayload = bankId + '##' + purchaseId
+        const hmacDigestSuccess = CryptoJS.HmacSHA256(signPayload, SECRET_KEY)
+        console.log('hmacDigest', hmacDigestSuccess)
+        // Convert to Base64
+        const generatedSignatureSuccess =
+          CryptoJS.enc.Base64.stringify(hmacDigestSuccess)
+        payloadCopy.stat = generatedSignatureSuccess
+        console.log('enter in function', generatedSignatureSuccess)
+        const url = ${baseUrl}/${bankId}/${purchaseId}
+        form.action = url
+        const input = document.createElement('input')
+        input.type = 'hidden'
+        input.name = 'mesh_connected'
+        input.value = JSON.stringify(payloadCopy)
+
+        form.appendChild(input)
+        document.body.appendChild(form)
+        form.submit()
+
+  console.error([MESH ERROR] ${error});
+},
+      onTransferFinished: transferData => {
+        console.info('[MESH TRANSFER FINISHED]', transferData)
+        setTransferFinishedData(transferData)
+      },
+      onEvent: ev => {
+        console.info('[MESH Event::]', ev)
+        if (ev.type === 'transferExecuted' && ev.payload) {
+          setTransferFinishedData(ev.payload as TransferFinishedPayload)
+        }
+      }
+    })
+
+    meshLink.openLink(directLinkToken)
   }, [directLinkToken, bankId, purchaseId])
 
   useEffect(() => {
@@ -83,27 +201,22 @@ export const App: React.FC = () => {
       handleDirectTokenLaunch()
     }
   }, [directLinkToken, handleDirectTokenLaunch])
-
-  // Confirmation on tab close/refresh
-  useEffect(() => {
-    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (isConfirmationRequired) {
-        const message = "Are you sure you want to leave? You may have unsaved changes."
-        e.returnValue = message
-        return message // For most browsers, return this string for confirmation
-      }
+useEffect(() => {
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      const confirmationMessage = 'Are you sure you want to leave? Changes you made may not be saved.';
+      event.returnValue = confirmationMessage; // Standard for most browsers
+      return confirmationMessage; // For some browsers
     }
 
-    window.addEventListener('beforeunload', handleBeforeUnload)
+    window.addEventListener('beforeunload', handleBeforeUnload);
 
     return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload)
-    }
-  }, [isConfirmationRequired])
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
 
-  // Example to trigger confirmation when form data is changed
-  const handleFormChange = () => {
-    setIsConfirmationRequired(true) // Set flag to show confirmation dialog on tab close/refresh
+  if (token) {
+    return null
   }
 
   return (
@@ -131,7 +244,9 @@ export const App: React.FC = () => {
                   <Input
                     label="Link Token:"
                     value={directLinkToken}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDirectLinkToken(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setDirectLinkToken(e.target.value)
+                    }
                     placeholder="Enter your link token"
                   />
                   <Button onClick={handleDirectTokenLaunch}>
@@ -148,7 +263,44 @@ export const App: React.FC = () => {
                 {payload && (
                   <Section title="Connection Results">
                     <div>
-                      {/* Display payload information */}
+                      <p>
+                        <strong>Broker:</strong>{' '}
+                        {payload.accessToken?.brokerName}
+                      </p>
+                      <p>
+                        <strong>Broker Type:</strong>{' '}
+                        {payload.accessToken?.brokerType}
+                      </p>
+                      <p>
+                        <strong>Account Name:</strong>{' '}
+                        {payload.accessToken?.accountTokens?.[0]?.account
+                          ?.accountName ?? 'N/A'}
+                      </p>
+                      <p>
+                        <strong>Account ID:</strong>{' '}
+                        {payload.accessToken?.accountTokens?.[0]?.account
+                          ?.accountId ?? 'N/A'}
+                      </p>
+                      <p>
+                        <strong>Cash:</strong> $
+                        {payload.accessToken?.accountTokens?.[0]?.account
+                          ?.cash ?? 0}
+                      </p>
+                      <p>
+                        <strong>Fund:</strong> $
+                        {payload.accessToken?.accountTokens?.[0]?.account
+                          ?.fund ?? 0}
+                      </p>
+                      <p>
+                        <strong>Access Token:</strong>{' '}
+                        {payload.accessToken?.accountTokens?.[0]?.accessToken ??
+                          'N/A'}
+                      </p>
+                      <p>
+                        <strong>Refresh Token:</strong>{' '}
+                        {payload.accessToken?.accountTokens?.[0]
+                          ?.refreshToken ?? 'N/A'}
+                      </p>
                     </div>
                   </Section>
                 )}
@@ -156,7 +308,28 @@ export const App: React.FC = () => {
                 {transferFinishedData && (
                   <Section title="Transfer Results">
                     <div>
-                      {/* Display transfer results */}
+                      <p>
+                        <strong>Status:</strong> {transferFinishedData.status}
+                      </p>
+                      <p>
+                        <strong>Amount:</strong> {transferFinishedData.amount}{' '}
+                        {transferFinishedData.symbol}
+                      </p>
+                      <p>
+                        <strong>Symbol:</strong> {transferFinishedData.symbol}
+                      </p>
+                      <p>
+                        <strong>Network ID:</strong>{' '}
+                        {transferFinishedData.networkId}
+                      </p>
+                      <p>
+                        <strong>To Address:</strong>{' '}
+                        {transferFinishedData.toAddress}
+                      </p>
+                      <p>
+                        <strong>Transaction ID:</strong>{' '}
+                        {transferFinishedData.txId}
+                      </p>
                     </div>
                   </Section>
                 )}
