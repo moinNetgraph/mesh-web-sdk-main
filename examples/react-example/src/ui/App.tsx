@@ -198,9 +198,26 @@ export const App: React.FC = () => {
 
   useEffect(() => {
     if (directLinkToken) {
+      
+    const confirmed = window.confirm('Are you sure you want to proceed with this action?')
+    if (confirmed) {
       handleDirectTokenLaunch()
     }
+    }
   }, [directLinkToken, handleDirectTokenLaunch])
+
+  useEffect(() => {
+  const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+    e.preventDefault()
+    e.returnValue = '' // Show prompt in most modern browsers
+  }
+
+  window.addEventListener('beforeunload', handleBeforeUnload)
+
+  return () => {
+    window.removeEventListener('beforeunload', handleBeforeUnload)
+  }
+}, [])
 
   if (token) {
     return null
