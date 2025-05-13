@@ -47,6 +47,19 @@ export const App: React.FC = () => {
   const SECRET_KEY = 'OVzBmEmVk0iaAnoeqTsDvDrnoMNKCU9b1id2cB4KVX0='
   const [isSignatureValid, setIsSignatureValid] = useState(false)
   const [verificationError, setVerificationError] = useState('')
+  useEffect(() => {
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      const confirmationMessage = 'Are you sure you want to leave? Changes you made may not be saved.';
+      event.returnValue = confirmationMessage; // Standard for most browsers
+      return confirmationMessage; // For some browsers
+    }
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
   const handleDirectTokenLaunch = useCallback(() => {
     if (!directLinkToken) {
       setError('Please enter a link token')
@@ -201,19 +214,7 @@ export const App: React.FC = () => {
       handleDirectTokenLaunch()
     }
   }, [directLinkToken, handleDirectTokenLaunch])
-  useEffect(() => {
-    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-      const confirmationMessage = 'Are you sure you want to leave? Changes you made may not be saved.';
-      event.returnValue = confirmationMessage; // Standard for most browsers
-      return confirmationMessage; // For some browsers
-    }
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
-  }, []);
+  
 
   if (token) {
     return null
