@@ -29,7 +29,12 @@ const RedirectBlock: React.FC = () => {
   return null
 }
 
-
+// Declare the global window interface to add our custom property
+declare global {
+  interface Window {
+    isApiNavigation: boolean;
+  }
+}
 
 export const App: React.FC = () => {
   const [error, setError] = useState<string | null>(null)
@@ -49,8 +54,17 @@ export const App: React.FC = () => {
   const SECRET_KEY = 'OVzBmEmVk0iaAnoeqTsDvDrnoMNKCU9b1id2cB4KVX0='
   const [isSignatureValid, setIsSignatureValid] = useState(false)
   const [verificationError, setVerificationError] = useState('')
+
   useEffect(() => {
+    // Initialize our flag for API navigation
+    window.isApiNavigation = false;
+    
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      // If it's an API navigation, don't show the confirmation dialog
+      if (window.isApiNavigation) {
+        return;
+      }
+      
       const confirmationMessage = 'Are you sure you want to leave? Changes you made may not be saved.';
       event.returnValue = confirmationMessage; // Standard for most browsers
       return confirmationMessage; // For some browsers
@@ -62,6 +76,32 @@ export const App: React.FC = () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
   }, []);
+
+  // Helper function to safely submit forms without triggering beforeunload
+  const safeFormSubmit = (url: string, method: string, data: any) => {
+    // Set the flag to true to prevent the beforeunload dialog
+    window.isApiNavigation = true;
+    
+    const form = document.createElement('form');
+    form.method = method;
+    form.action = url;
+    
+    // Add input fields for each data property
+    if (data) {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = Object.keys(data)[0];
+      input.value = typeof data[Object.keys(data)[0]] === 'string' 
+        ? data[Object.keys(data)[0]] 
+        : JSON.stringify(data[Object.keys(data)[0]]);
+      
+      form.appendChild(input);
+    }
+    
+    document.body.appendChild(form);
+    form.submit();
+  };
+  
   const handleDirectTokenLaunch = useCallback(() => {
     if (!directLinkToken) {
       setError('Please enter a link token')
@@ -144,9 +184,6 @@ export const App: React.FC = () => {
         setPayload(payload)
         console.info('[MESH CONNECTED]', payload)
 
-        const form = document.createElement('form')
-        form.method = 'POST'
-
         const payloadCopy = JSON.parse(JSON.stringify(payload))
 
         const signPayload = bankId + '##' + purchaseId
@@ -158,21 +195,13 @@ export const App: React.FC = () => {
         payloadCopy.stat = generatedSignatureSuccess
         console.log('enter in function', generatedSignatureSuccess)
         const url = `${baseUrl}/${bankId}/${purchaseId}`
-        form.action = url
-        const input = document.createElement('input')
-        input.type = 'hidden'
-        input.name = 'mesh_connected'
-        input.value = JSON.stringify(payloadCopy)
-
-        form.appendChild(input)
-        document.body.appendChild(form)
-        form.submit()
+        
+        // Use our safe form submit function instead
+        safeFormSubmit(url, 'POST', { 'mesh_connected': payloadCopy });
       },
       onExit: (error, summary) => {
         let payload = { "error": "AUTH_FAILED" };
-        const form = document.createElement('form')
-        form.method = 'POST'
-
+        
         const payloadCopy = JSON.parse(JSON.stringify(payload))
 
         const signPayload = bankId + '##' + purchaseId
@@ -184,15 +213,9 @@ export const App: React.FC = () => {
         payloadCopy.stat = generatedSignatureSuccess
         console.log('enter in function', generatedSignatureSuccess)
         const url = `${baseUrl}/${bankId}/${purchaseId}`
-        form.action = url
-        const input = document.createElement('input')
-        input.type = 'hidden'
-        input.name = 'mesh_connected'
-        input.value = JSON.stringify(payloadCopy)
-
-        form.appendChild(input)
-        document.body.appendChild(form)
-        form.submit()
+        
+        // Use our safe form submit function instead
+        safeFormSubmit(url, 'POST', { 'mesh_connected': payloadCopy });
 
         console.error(`[MESH ERROR] ${error}`);
       },
